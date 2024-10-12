@@ -36,4 +36,22 @@ pub fn movement_input(
             },
         }); // W is being held down
     }
+    if keys.pressed(KeyCode::KeyA) {
+        movement_events.send(MovementEvent {
+            movement_type: MovementType::TurnLeft,
+            vessel_id: VesselID {
+                player: Player::Host,
+                id: 0,
+            },
+        });
+    }
+    if keys.pressed(KeyCode::KeyD) {
+        movement_events.send(MovementEvent {
+            movement_type: MovementType::TurnRight,
+            vessel_id: VesselID {
+                player: Player::Host,
+                id: 0,
+            },
+        });
+    }
 }
