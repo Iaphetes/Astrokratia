@@ -56,7 +56,7 @@ fn setup(
         model_path: "3D/vessels/greek/Myrmidon_Leviathan/vessel.glb".to_owned(),
         movement_properties: MovementProperties {
             linear_acceleration: Vec3 {
-                x: 20.0,
+                x: 100.0,
                 y: 5.0,
                 z: 5.0,
             },

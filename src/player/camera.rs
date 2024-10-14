@@ -35,20 +35,41 @@ pub fn enable_camera(mut commands: Commands) {
                 ..default()
             },
             tonemapping: Tonemapping::TonyMcMapface, // 2. Using a tonemapper that desaturates to white is recommended
-            transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+            transform: Transform::from_xyz(-10.0, 2.5, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
             ..default()
         },
         // 3. Enable bloom for the camera
         BloomSettings::NATURAL,
         CameraBehaviour {
             offset: Vec3 {
-                x: 0.0,
+                x: -30.0,
                 y: 10.0,
-                z: -30.0,
+                z: 0.0,
             },
             camera_rotation: CameraRotation::MatchY,
         },
     ));
+    // commands.spawn((
+    //     Camera3dBundle {
+    //         camera: Camera {
+    //             hdr: true, // 1. HDR is required for bloom
+    //             ..default()
+    //         },
+    //         tonemapping: Tonemapping::TonyMcMapface, // 2. Using a tonemapper that desaturates to white is recommended
+    //         transform: Transform::from_xyz(0.0, 500.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
+    //         ..default()
+    //     },
+    //     // 3. Enable bloom for the camera
+    //     BloomSettings::NATURAL,
+    //     CameraBehaviour {
+    //         offset: Vec3 {
+    //             x: 0.0,
+    //             y: 10.0,
+    //             z: -30.0,
+    //         },
+    //         camera_rotation: CameraRotation::MatchY,
+    //     },
+    // ));
 }
 
 fn track_camera(
@@ -67,6 +88,7 @@ fn track_camera(
                     new_camera_transform.look_at(transform.translation, Vec3::Y);
                 }
             };
+            new_camera_transform.rotate_around(transform.translation, transform.rotation);
 
             *camera_transform = new_camera_transform;
         }
