@@ -32,13 +32,14 @@ pub struct MovementEvent {
 }
 #[derive(Component, Default)]
 pub struct VelocityVector {
-    linear_velocity: Vec3,
-    angular_velocity: Vec3,
+    pub linear_velocity: Vec3,
+    pub angular_velocity: Vec3,
 }
 
 #[derive(Clone)]
 pub struct MovementProperties {
     pub linear_acceleration: Vec3,
+
     pub angular_acceleration: Vec3,
 }
 fn change_velocity(
