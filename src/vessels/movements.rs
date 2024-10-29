@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 
 use bevy::prelude::*;
-use bevy_rapier3d::rapier::pipeline::DebugColor;
+// use bevy_rapier3d::rapier::pipeline::DebugColor;
 
 use crate::player::input::movement_input;
 
@@ -34,12 +34,13 @@ pub struct MovementEvent {
 pub struct VelocityVector {
     pub linear_velocity: Vec3,
     pub angular_velocity: Vec3,
+    pub turn_radius: f32,
+    pub turn_circle_center: Vec3,
 }
 
 #[derive(Clone)]
 pub struct MovementProperties {
     pub linear_acceleration: Vec3,
-
     pub angular_acceleration: Vec3,
 }
 fn change_velocity(
@@ -98,25 +99,26 @@ fn calculate_turn_circle_center(
     turn_circle_center.rotate_around(transform.translation, transform.rotation);
     (turn_radius, turn_circle_center.translation)
 }
-#[derive(Component)]
-pub struct DebugCube;
+// #[derive(Component)]
+// pub struct DebugCube;
 pub fn apply_velocity(
-    mut commands: Commands,
+    // mut commands: Commands,
     time: Res<Time>,
     mut vessels: Query<(&mut Transform, &mut VelocityVector)>,
-    mut debug_cube_query: Query<
-        (Entity, &mut Transform),
-        (With<DebugCube>, Without<VelocityVector>),
-    >,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    // mut debug_cube_query: Query<
+    //     (Entity, &mut Transform),
+    //     (With<DebugCube>, Without<VelocityVector>),
+    // >,
+    // mut meshes: ResMut<Assets<Mesh>>,
+    // mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    for (mut vessel_transform, vessel_velocity) in vessels.iter_mut() {
-        let mut debug_cube_instance = debug_cube_query.get_single_mut();
+    for (mut vessel_transform, mut vessel_velocity) in vessels.iter_mut() {
+        // let mut debug_cube_instance = debug_cube_query.get_single_mut();
         if vessel_velocity.angular_velocity == Vec3::ZERO {
-            if let Ok((debug_cube_entity, _debug_cube)) = debug_cube_instance {
-                commands.entity(debug_cube_entity).despawn();
-            }
+            // if let Ok((debug_cube_entity, _debug_cube)) = debug_cube_instance {
+            //     commands.entity(debug_cube_entity).despawn();
+
+            // }
             let x_direction = vessel_transform.local_x();
             let y_direction = vessel_transform.local_y();
             let z_direction = vessel_transform.local_z();
@@ -129,32 +131,34 @@ pub fn apply_velocity(
         } else {
             let (turn_radius, turn_circle_center) =
                 calculate_turn_circle_center(&vessel_transform, &vessel_velocity);
+            vessel_velocity.turn_radius = turn_radius;
+            vessel_velocity.turn_circle_center = turn_circle_center;
             if turn_radius == 0.0 {
                 vessel_transform
                     .rotate_local_y(vessel_velocity.angular_velocity.y * time.delta_seconds());
             } else {
                 println!("Turn Radius: {:?}", turn_radius);
 
-                match debug_cube_instance {
-                    Ok((_, mut debug_cube_transform)) => {
-                        debug_cube_transform.translation = turn_circle_center;
-                    }
-                    Err(_) => {
-                        commands.spawn((
-                            PbrBundle {
-                                mesh: meshes.add(Cuboid::default()),
+                // match debug_cube_instance {
+                //     Ok((_, mut debug_cube_transform)) => {
+                //         debug_cube_transform.translation = turn_circle_center;
+                //     }
+                //     Err(_) => {
+                //         commands.spawn((
+                //             PbrBundle {
+                //                 mesh: meshes.add(Cuboid::default()),
 
-                                material: materials.add(StandardMaterial {
-                                    emissive: LinearRgba::rgb(2.0, 13.99, 5.32),
-                                    ..default()
-                                }),
-                                transform: Transform::from_translation(turn_circle_center),
-                                ..default()
-                            },
-                            DebugCube,
-                        ));
-                    }
-                }
+                //                 material: materials.add(StandardMaterial {
+                //                     emissive: LinearRgba::rgb(2.0, 13.99, 5.32),
+                //                     ..default()
+                //                 }),
+                //                 transform: Transform::from_translation(turn_circle_center),
+                //                 ..default()
+                //             },
+                //             DebugCube,
+                //         ));
+                //     }
+                // }
                 let turn_circle_circumference = 2.0 * PI * turn_radius;
                 let path_travelled = vessel_velocity.linear_velocity.x * time.delta_seconds();
                 vessel_transform.rotate_around(
