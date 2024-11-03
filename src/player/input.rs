@@ -1,8 +1,9 @@
-use bevy::prelude::*;
+use bevy::{color::palettes::css::GREEN, prelude::*};
 
 use crate::vessels::{
     movements::{MovementEvent, MovementType},
     vessels::VesselID,
+    weapons::{WeaponStats, WeaponsFireEvent, WeaponsType},
 };
 
 use super::player::Player;
@@ -10,7 +11,7 @@ use super::player::Player;
 pub struct InputParser;
 impl Plugin for InputParser {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, movement_input);
+        app.add_systems(Update, (weapons_input, movement_input));
     }
 }
 pub fn movement_input(
@@ -53,5 +54,27 @@ pub fn movement_input(
                 id: 0,
             },
         });
+    }
+}
+pub fn weapons_input(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut weapons_fire_event: EventWriter<WeaponsFireEvent>,
+) {
+    if keys.pressed(KeyCode::Space) {
+        weapons_fire_event.send(WeaponsFireEvent((
+            VesselID {
+                player: Player::Host,
+                id: 0,
+            },
+            WeaponStats {
+                weapons_type: WeaponsType::Plasma,
+                color: LinearRgba::rgb(0.0, 255.0, 0.0),
+                velocity: Vec3 {
+                    x: 10.0,
+                    y: 0.0,
+                    z: 0.0,
+                },
+            },
+        )));
     }
 }

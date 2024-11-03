@@ -73,6 +73,7 @@ fn change_velocity(
                 }
             }
         }
+
         let angular_velocity_change =
             time.delta_seconds() * vessel_definition.movement_properties.angular_acceleration.y;
         if vessel_velocity.angular_velocity.y.abs() <= angular_velocity_change {

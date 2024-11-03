@@ -2,13 +2,16 @@
 mod environment;
 mod player;
 mod vessels;
+use std::collections::HashMap;
+
 use bevy::prelude::*;
-use environment::skybox::SkyboxPlugin;
+use environment::{skybox::SkyboxPlugin, solar_system::SolarSystemPlugin};
 use player::{camera::FlightCameraPlugin, input::InputParser};
 use vessels::{
     movements::{MovementEvent, MovementProperties, VelocityVector, VesselMovement},
     spawn::spawn_vessel,
     vessels::{VesselDefinition, VesselID},
+    weapons::{Hardpoint, WeaponsPlugin, WeaponsType},
 };
 fn main() {
     App::new()
@@ -18,6 +21,8 @@ fn main() {
             VesselMovement,
             InputParser,
             SkyboxPlugin,
+            SolarSystemPlugin,
+            WeaponsPlugin,
         ))
         .add_event::<MovementEvent>()
         .add_systems(Startup, setup)
@@ -25,22 +30,8 @@ fn main() {
 }
 
 /// set up a simple 3D scene
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server: Res<AssetServer>,
-) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // cube
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(Cylinder::new(0.01, 1.0)),
-        material: materials.add(StandardMaterial {
-            emissive: LinearRgba::rgb(13.99, 5.32, 2.0), // 4. Put something bright in a dark environment to see the effect
-            ..default()
-        }),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0).with_rotation(Quat::from_rotation_x(90.0)),
-        ..default()
-    });
     // light
     commands.spawn(PointLightBundle {
         point_light: PointLight {
@@ -66,6 +57,56 @@ fn setup(
                 z: 5.0,
             },
         },
+        hardpoints: vec![(
+            WeaponsType::Plasma,
+            vec![
+                Hardpoint {
+                    transform: Transform::from_translation(Vec3 {
+                        x: 10.0,
+                        y: 0.0,
+                        z: -1.80,
+                    }),
+                },
+                Hardpoint {
+                    transform: Transform::from_translation(Vec3 {
+                        x: 9.50,
+                        y: 0.0,
+                        z: -2.1,
+                    }),
+                },
+                Hardpoint {
+                    transform: Transform::from_translation(Vec3 {
+                        x: 9.0,
+                        y: 0.0,
+                        z: -2.40,
+                    }),
+                },
+                Hardpoint {
+                    transform: Transform::from_translation(Vec3 {
+                        x: 10.0,
+                        y: 0.0,
+                        z: 1.80,
+                    }),
+                },
+                Hardpoint {
+                    transform: Transform::from_translation(Vec3 {
+                        x: 9.50,
+                        y: 0.0,
+                        z: 2.10,
+                    }),
+                },
+                Hardpoint {
+                    transform: Transform::from_translation(Vec3 {
+                        x: 9.0,
+                        y: 0.0,
+                        z: 2.40,
+                    }),
+                },
+            ],
+        )]
+        .iter()
+        .cloned()
+        .collect(),
     };
     spawn_vessel(
         &mut commands,

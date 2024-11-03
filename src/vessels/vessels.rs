@@ -1,10 +1,15 @@
+use std::collections::HashMap;
+
 use bevy::prelude::Component;
 
 use crate::player::player::Player;
 
-use super::movements::MovementProperties;
+use super::{
+    movements::MovementProperties,
+    weapons::{Hardpoint, WeaponsType},
+};
 
-#[derive(Component, PartialEq, Eq)]
+#[derive(Component, PartialEq, Eq, Clone)]
 pub struct VesselID {
     pub player: Player,
     pub id: u32,
@@ -24,4 +29,5 @@ pub struct VesselDefinition {
     pub faction: Faction,
     pub model_path: String,
     pub movement_properties: MovementProperties,
+    pub hardpoints: HashMap<WeaponsType, Vec<Hardpoint>>,
 }

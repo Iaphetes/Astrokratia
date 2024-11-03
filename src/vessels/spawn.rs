@@ -16,6 +16,7 @@ pub fn spawn_vessel(
                 GltfAssetLabel::Scene(0).from_asset(vessel_definition.model_path.clone()),
                 // GltfAssetLabel::Scene(0).from_asset(),
             ),
+            // transform: Transform::from_scale(Vec3::splat(0.01)),
             ..default()
         },
         vessel_id,
